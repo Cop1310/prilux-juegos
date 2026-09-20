@@ -82,12 +82,12 @@ function ranksBox(){const k=Object.keys(ranks);if(!k.length)return '<div class="
  return '<h3 style="color:#fff;margin:18px 2px 8px;font-size:14px">🏆 Mejores marcas (este equipo)</h3><div class="card">'+k.sort().map(x=>'<div class="tile"><div class="l" style="font-size:13px">'+x+'</div><div class="best">'+showVal(ranks[x])+' · '+ranks[x].name+'</div></div>').join('')+'</div>';}
 
 /* ---- PAREJAS ---- */
-const PAIRSIZES_P=[{p:6,c:3,lab:'6 parejas · 3×4'},{p:9,c:3,lab:'9 parejas · 3×6'},{p:12,c:3,lab:'12 parejas · 3×8'}];const PAIRSIZES_W=[{p:6,c:3,lab:'6 parejas · 3×4'},{p:9,c:3,lab:'9 parejas · 3×6'}];
+const PAIRSIZES_P=[{p:6,c:3,lab:'6 · 3×4'},{p:8,c:4,lab:'8 · 4×4'},{p:9,c:3,lab:'9 · 3×6'},{p:10,c:4,lab:'10 · 4×5'}];const PAIRSIZES_W=[{p:6,c:3,lab:'6 · 3×4'},{p:8,c:4,lab:'8 · 4×4'},{p:9,c:3,lab:'9 · 3×6'},{p:10,c:4,lab:'10 · 4×5'}];
 function cfgPairs(kind){const SZ=kind==='prod'?PAIRSIZES_P:PAIRSIZES_W;let sel=SZ[0],diff='facil';
  const draw=()=>{app.innerHTML=header()+'<div class="topbar"><span class="back" id="bk">‹ Volver</span><b>Parejas · '+(kind==='prod'?'Producto':'DPTO. I+D')+'</b><span></span></div><div class="card pad"><div class="sub">Dificultad</div><div class="row" style="margin-bottom:12px">'+['facil','dificil'].map(d=>'<div class="pick '+(diff===d?'on':'')+'" data-d="'+d+'">'+(d==='facil'?'Fácil (ver 3 s)':'Difícil')+'</div>').join('')+'</div><div class="sub">Tablero</div><div class="row" style="margin-bottom:16px">'+SZ.map((s,i)=>'<div class="pick '+(sel.p===s.p?'on':'')+'" data-i="'+i+'">'+s.lab+'</div>').join('')+'</div><div class="mini" style="margin-bottom:12px">Cada error suma +5 s. Gana el menor tiempo.</div><button class="btn d" id="start" style="width:100%">Empezar</button></div>';
   $('#bk').onclick=()=>menu(kind==='prod'?'prod':'work');
   document.querySelectorAll('[data-d]').forEach(e=>e.onclick=()=>{diff=e.dataset.d;draw();});
-  document.querySelectorAll('[data-i]').forEach(e=>e.onclick=()=>{sel=PAIRSIZES[+e.dataset.i];draw();});
+  document.querySelectorAll('[data-i]').forEach(e=>e.onclick=()=>{sel=SZ[+e.dataset.i];draw();});
   $('#start').onclick=()=>playPairs(kind,sel,diff);};draw();}
 function pickPairItems(kind,n){if(kind==='work')return sh(W).slice(0,n).map(w=>({img:w.img,key:w.n}));
  const pool=sh(P),seen=new Set(),out=[];for(const p of pool){const c=clus(p.n);if(seen.has(c))continue;seen.add(c);out.push({img:p.img,key:p.n});if(out.length>=n)break;}return out;}
