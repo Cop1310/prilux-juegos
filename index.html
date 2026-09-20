@@ -10,7 +10,7 @@ h1,h2,h3{margin:0}
 .card{background:var(--card);border-radius:16px;box-shadow:0 8px 26px rgba(0,0,0,.35);overflow:hidden}
 .pad{padding:18px}
 .center{min-height:82vh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;text-align:center;color:#fff}
-.logoBig{width:150px;height:auto}
+.logoBig{width:min(320px,80vw);height:auto;margin-bottom:6px}
 input.name{font:inherit;font-size:16px;padding:13px 14px;border-radius:12px;border:1.5px solid #2a3a63;background:#0f1830;color:#fff;width:min(320px,86vw);text-align:center}
 .btn{font:inherit;font-weight:700;font-size:16px;border:0;border-radius:12px;padding:14px 20px;background:var(--cyan);color:#04263a;cursor:pointer}
 .btn.d{background:var(--brand);color:#fff}.btn.g{background:#eef1f6;color:var(--brand)}
@@ -82,9 +82,9 @@ function ranksBox(){const k=Object.keys(ranks);if(!k.length)return '<div class="
  return '<h3 style="color:#fff;margin:18px 2px 8px;font-size:14px">🏆 Mejores marcas (este equipo)</h3><div class="card">'+k.sort().map(x=>'<div class="tile"><div class="l" style="font-size:13px">'+x+'</div><div class="best">'+showVal(ranks[x])+' · '+ranks[x].name+'</div></div>').join('')+'</div>';}
 
 /* ---- PAREJAS ---- */
-const PAIRSIZES=[{p:6,c:3,lab:'3×4 · 6 parejas'},{p:8,c:4,lab:'4×4 · 8 parejas'},{p:10,c:5,lab:'5×4 · 10 parejas'}];
-function cfgPairs(kind){let sel=PAIRSIZES[0],diff='facil';
- const draw=()=>{app.innerHTML=header()+'<div class="topbar"><span class="back" id="bk">‹ Volver</span><b>Parejas · '+(kind==='prod'?'Producto':'DPTO. I+D')+'</b><span></span></div><div class="card pad"><div class="sub">Dificultad</div><div class="row" style="margin-bottom:12px">'+['facil','dificil'].map(d=>'<div class="pick '+(diff===d?'on':'')+'" data-d="'+d+'">'+(d==='facil'?'Fácil (ver 3 s)':'Difícil')+'</div>').join('')+'</div><div class="sub">Tablero</div><div class="row" style="margin-bottom:16px">'+PAIRSIZES.map((s,i)=>'<div class="pick '+(sel.p===s.p?'on':'')+'" data-i="'+i+'">'+s.lab+'</div>').join('')+'</div><div class="mini" style="margin-bottom:12px">Cada error suma +5 s. Gana el menor tiempo.</div><button class="btn d" id="start" style="width:100%">Empezar</button></div>';
+const PAIRSIZES_P=[{p:6,c:3,lab:'6 parejas · 3×4'},{p:9,c:3,lab:'9 parejas · 3×6'},{p:12,c:3,lab:'12 parejas · 3×8'}];const PAIRSIZES_W=[{p:6,c:3,lab:'6 parejas · 3×4'},{p:9,c:3,lab:'9 parejas · 3×6'}];
+function cfgPairs(kind){const SZ=kind==='prod'?PAIRSIZES_P:PAIRSIZES_W;let sel=SZ[0],diff='facil';
+ const draw=()=>{app.innerHTML=header()+'<div class="topbar"><span class="back" id="bk">‹ Volver</span><b>Parejas · '+(kind==='prod'?'Producto':'DPTO. I+D')+'</b><span></span></div><div class="card pad"><div class="sub">Dificultad</div><div class="row" style="margin-bottom:12px">'+['facil','dificil'].map(d=>'<div class="pick '+(diff===d?'on':'')+'" data-d="'+d+'">'+(d==='facil'?'Fácil (ver 3 s)':'Difícil')+'</div>').join('')+'</div><div class="sub">Tablero</div><div class="row" style="margin-bottom:16px">'+SZ.map((s,i)=>'<div class="pick '+(sel.p===s.p?'on':'')+'" data-i="'+i+'">'+s.lab+'</div>').join('')+'</div><div class="mini" style="margin-bottom:12px">Cada error suma +5 s. Gana el menor tiempo.</div><button class="btn d" id="start" style="width:100%">Empezar</button></div>';
   $('#bk').onclick=()=>menu(kind==='prod'?'prod':'work');
   document.querySelectorAll('[data-d]').forEach(e=>e.onclick=()=>{diff=e.dataset.d;draw();});
   document.querySelectorAll('[data-i]').forEach(e=>e.onclick=()=>{sel=PAIRSIZES[+e.dataset.i];draw();});
@@ -111,7 +111,7 @@ function playPairs(kind,sel,diff){const items=pickPairItems(kind,sel.p);let deck
  else{reveal(false);startTimer();}}
 
 /* ---- QUIZ (puntos: 10 al 1er intento, -1 por fallo) ---- */
-function cfgQuiz(){let size=9;const draw=()=>{app.innerHTML=header()+'<div class="topbar"><span class="back" id="bk">‹ Volver</span><b>¿Conoces el catálogo?</b><span></span></div><div class="card pad"><div class="sub">Cuadrícula</div><div class="row" style="margin-bottom:16px">'+[[9,'3×3'],[12,'4×3'],[15,'5×3']].map(s=>'<div class="pick '+(size===s[0]?'on':'')+'" data-s="'+s[0]+'">'+s[1]+'</div>').join('')+'</div><div class="mini" style="margin-bottom:12px">8 preguntas. 10 puntos por acierto a la primera; cada fallo resta 1.</div><button class="btn d" id="start" style="width:100%">Empezar</button></div>';
+function cfgQuiz(){let size=9;const draw=()=>{app.innerHTML=header()+'<div class="topbar"><span class="back" id="bk">‹ Volver</span><b>¿Conoces el catálogo?</b><span></span></div><div class="card pad"><div class="sub">Cuadrícula</div><div class="row" style="margin-bottom:16px">'+[[9,'3×3'],[12,'3×4'],[15,'3×5']].map(s=>'<div class="pick '+(size===s[0]?'on':'')+'" data-s="'+s[0]+'">'+s[1]+'</div>').join('')+'</div><div class="mini" style="margin-bottom:12px">8 preguntas. 10 puntos por acierto a la primera; cada fallo resta 1.</div><button class="btn d" id="start" style="width:100%">Empezar</button></div>';
  $('#bk').onclick=()=>menu('prod');document.querySelectorAll('[data-s]').forEach(e=>e.onclick=()=>{size=+e.dataset.s;draw();});$('#start').onclick=()=>playQuiz(size);};draw();}
 function playQuiz(size){const NQ=8,rk='Quiz catálogo '+size;let q=0,score=0;
  const byFam={},byDiv={};P.forEach(p=>{(byFam[p.fam]=byFam[p.fam]||[]).push(p);(byDiv[p.div]=byDiv[p.div]||[]).push(p);});
@@ -136,7 +136,7 @@ function playQuiz(size){const NQ=8,rk='Quiz catálogo '+size;let q=0,score=0;
   if(d.length<size-1)d=d.concat(sh(byDiv[t.div].filter(p=>p!==t&&line(p.n)!==line(t.n)&&d.indexOf(p)<0))).slice(0,size-1);
   if(d.length<size-1)d=d.concat(sh(P.filter(p=>p!==t&&line(p.n)!==line(t.n)&&d.indexOf(p)<0))).slice(0,size-1);
   return{txt:'¿Cuál de estos es un <b>'+t.n+'</b>?',names:false,opts:sh([t,...d]),ans:t};}
- function render(){const Q=makeQ(),cols=size<=9?3:(size<=12?4:5);let wrong=0;
+ function render(){const Q=makeQ(),cols=3;let wrong=0;
   app.innerHTML=header()+'<div class="topbar"><span class="back" id="bk">‹ Salir</span><span>'+(q+1)+'/'+NQ+'</span><span class="timer">'+score+' pts</span></div><div class="qtext">'+Q.txt+'</div><div class="grid" id="g" style="grid-template-columns:repeat('+cols+',1fr)"></div>';
   $('#bk').onclick=()=>menu('prod');const g=$('#g');
   Q.opts.forEach(o=>{const d=document.createElement('div');d.className='opt'+(Q.names?' named':'');d.innerHTML='<img src="'+o.img+'">'+(Q.names?'<div class="nm">'+o.n+'</div>':'');
@@ -149,7 +149,7 @@ function playQuiz(size){const NQ=8,rk='Quiz catálogo '+size;let q=0,score=0;
 function cfgOrder(mode){let diff='facil';const draw=()=>{app.innerHTML=header()+'<div class="topbar"><span class="back" id="bk">‹ Volver</span><b>Ordenar · '+(mode==='age'?'Edad':'Antigüedad')+'</b><span></span></div><div class="card pad"><div class="sub">Dificultad</div><div class="row" style="margin-bottom:14px">'+[['facil','Fácil (caras visibles)'],['dificil','Difícil (memoria, 5 s)']].map(d=>'<div class="pick '+(diff===d[0]?'on':'')+'" data-d="'+d[0]+'">'+d[1]+'</div>').join('')+'</div><div class="mini" style="margin-bottom:12px">Si te equivocas, vuelves a empezar.</div><button class="btn d" id="start" style="width:100%">Empezar</button></div>';
  $('#bk').onclick=()=>menu('work');document.querySelectorAll('[data-d]').forEach(e=>e.onclick=()=>{diff=e.dataset.d;draw();});$('#start').onclick=()=>playOrder(mode,diff);};draw();}
 function playOrder(mode,diff){const key=mode==='age'?'nac':'pri';const rk='Ordenar '+(mode==='age'?'edad':'antigüedad')+' '+diff;const title=mode==='age'?'Ordena de MAYOR a más joven':'Ordena del MÁS ANTIGUO al más nuevo';
- const pool=sh(W),cols=W.length<=9?3:4;let seq=[],t0=null,timerId=null,busy=false,phase=diff==='dificil'?'peek':'play';
+ const pool=sh(W),cols=3;let seq=[],t0=null,timerId=null,busy=false,phase=diff==='dificil'?'peek':'play';
  const minRem=()=>{const r=W.filter(x=>!seq.includes(x));return r.reduce((m,x)=>x[key]<m?x[key]:m,r[0][key]);};
  function tick(){$('#tm')&&($('#tm').textContent=t0?fmt(performance.now()-t0):'0.0s');}
  function grid(faceDown,extra){return '<div class="ogrid" id="list" style="grid-template-columns:repeat('+cols+',1fr)">'+
